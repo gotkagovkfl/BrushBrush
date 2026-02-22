@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// MonoBehaviour 달려있는 싱글톤
 /// </summary>
-public abstract class MonoSingleton<T> : MonoBehaviour where T : Component
+public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
 {
     public bool Initialized { get; private set; }
 
@@ -38,9 +38,9 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : Component
 
     //============================================================
     /// <summary>
-    /// 자신을 생성한다. 
+    /// 자신을 생성 및 초기화한다.
     /// </summary>
-    public static void CreateSelf()
+    public async static UniTask CreateAndInitializeAsync()
     {
         if (Instance != null)
         {
@@ -48,8 +48,13 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : Component
         }
         var go = new GameObject(typeof(T).Name);
         instance = go.AddComponent<T>();
+
+        //
+        await Instance.InitAsync();
     }
 
+
+    //============================================================
 
     /// <summary>
     /// 싱글톤 초기화
