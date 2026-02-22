@@ -2,49 +2,48 @@ using System;
 using System.Collections.Generic;
 
 
-public interface IState
+//=======================================================================================================================
+
+public abstract class CompositeState<TPayload> : IState where TPayload : IStatePayload
 {
-    void Enter();
-    void Exit();
-    void Update();
-}
+    private readonly StateMachine _inner = new();   // 현재
+    private StateMachine _outer;    // 부모
+    protected TPayload Payload { get; private set; }
 
-
-
-public abstract class CompositeState : IState
-{
-    protected StateMachine machine = new();
-
-    //==============================================================================
+    // ==========================================================
     #region [ 초기화 ]
-    //==============================================================================
+    // ==========================================================
 
     protected void Add<T>(T state) where T : IState
-        => machine.Add(state);
+        => _inner.Add(state);
 
     protected void Initial<T>() where T : IState
-        => machine.SetInitial<T>();
+        => _inner.SetInitial<T>();
 
     /// <summary>
-    /// StateMachine.Add() 에서 자동 호출 - 직접 호출 불필요
+    /// StateMachine.Add()에서 자동 호출. 직접 호출 불필요
     /// </summary>
     public void SetOuterMachine(StateMachine outer)
-        => machine.SetParent(outer);
+    {
+        _outer = outer;
+        _inner.SetParent(outer);
+    }
 
     #endregion
     // =============================================================================
     #region [ 실행 ]
     //==============================================================================
 
-    public void Enter()
+    public void Enter(IStatePayload payload)
     {
+        Payload = payload != null ? (TPayload)payload : default;    // 페이로드가 세팅되지 않은 경우, 기본 값으로 설정 (터짐 방지)
         Enter_Impl();
-        machine.Start();
+        _inner.Start();
     }
 
     public void Exit()
     {
-        machine.Exit();
+        _inner.Exit();
         Exit_Impl();
     }
 
@@ -52,7 +51,7 @@ public abstract class CompositeState : IState
     public void Update()
     {
         Update_Impl();
-        machine.Update();
+        _inner.Update();
     }
 
     protected abstract void Enter_Impl();
@@ -63,9 +62,13 @@ public abstract class CompositeState : IState
     //=================================================================================
     #region [ 상태 전이 ]
     //=================================================================================
+ 
+    protected void Request<T, TNextPayload>(TNextPayload payload) where T : IState where TNextPayload : IStatePayload
+        => _inner.Request<T, TNextPayload>(payload);
 
-    protected void Request<T>() where T : IState
-        => machine.Request<T>();
+    protected void RequestToOuter<T, TNextPayload>(TNextPayload payload) where T : IState where TNextPayload : IStatePayload
+        => _outer?.Request<T, TNextPayload>(payload);
 
+        
     #endregion
 }
