@@ -21,7 +21,7 @@ public enum UILayer
 public class UIManager : MonoSingleton<UIManager>
 {
     // 캔버스
-    Dictionary<UILayer, Canvas> canvasMap = new();
+    Dictionary<UILayer, Canvas> _canvasMap = new();
     
     // uiViews
     const string PATH_BASE = "UI/";
@@ -44,7 +44,7 @@ public class UIManager : MonoSingleton<UIManager>
     void BuildCanvases()
     {
         // 
-        if (canvasMap.Count > 0)
+        if (_canvasMap.Count > 0)
         {
             Debug.Log("!! [ UI Manager ] 캔버스 중복 생성 금지");
             return;
@@ -64,12 +64,12 @@ public class UIManager : MonoSingleton<UIManager>
             go.AddComponent<CanvasScaler>();
             go.AddComponent<GraphicRaycaster>();
 
-            canvasMap[layer] = canvas;
+            _canvasMap[layer] = canvas;
         }
     }
 
     public Transform GetLayer(UILayer layer)
-        => canvasMap[layer].transform;
+        => _canvasMap[layer].transform;
 
 
     #endregion
