@@ -74,17 +74,21 @@ public class StateMachine
     /// <summary>
     /// 상태 머신 시작
     /// </summary>
-    public void Start()
+    public async UniTask Start()
     {
         // 머신의 시작 상태가 반드시 존재해야한다.
         if (_currState == null)
             throw new Exception($"Initial state not set in {GetType().Name}");
 
         //
-        _currState.Enter(_pendingPayload);
+        await _currState.Enter(_pendingPayload);
         _pendingPayload = null;
     }
-    public void Exit() => _currState?.Exit();
+    public async UniTask Exit()
+    {
+        if (_currState != null)
+            await _currState.Exit();
+    }
 
     /// <summary>
     /// Deferred Transition 적용. (전이 요청시 현재 상태의 업데이트 까지 온전히 끝나고 상태 전이)

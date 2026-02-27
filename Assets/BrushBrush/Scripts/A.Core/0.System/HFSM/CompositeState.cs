@@ -11,6 +11,8 @@ public abstract class CompositeState<TPayload> : IState where TPayload : IStateP
     private StateMachine _outer;    // 부모
     protected TPayload Payload { get; private set; }
 
+    bool _hasInnerState;    // 자식 상태가 있는지,
+
     // ==========================================================
     #region [ 초기화 ]
     // ==========================================================
@@ -39,12 +41,12 @@ public abstract class CompositeState<TPayload> : IState where TPayload : IStateP
     {
         Payload = payload != null ? (TPayload)payload : default;    // 페이로드가 세팅되지 않은 경우, 기본 값으로 설정 (터짐 방지)
         Enter_Impl();
-        _inner.Start();
+        if (_hasInnerState) await _inner.Start();
     }
 
     public virtual async UniTask Exit()
     {
-        _inner.Exit();
+        if (_hasInnerState) await _inner.Exit();
         Exit_Impl();
     }
 
@@ -52,7 +54,7 @@ public abstract class CompositeState<TPayload> : IState where TPayload : IStateP
     public void Update()
     {
         Update_Impl();
-        _inner.Update();
+        if (_hasInnerState) _inner.Update();
     }
 
     protected abstract void Enter_Impl();
