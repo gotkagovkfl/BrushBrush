@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 /// <summary>
 /// 내부 StateMachine을 보유한 State.
@@ -14,7 +16,8 @@ public class StateMachine
 
     Type _pendingType;   // 전이할 상태 타입
     IStatePayload _pendingPayload;
-    bool _hasPending;
+    bool _hasPending;  
+    bool _isTransitioning;  // 상태 전환 중일때 (update에서 로직 실행 방지)
 
     StateMachine _parent; // 부모 머신
 
@@ -88,10 +91,17 @@ public class StateMachine
     /// </summary>
     public void Update()
     {
+        // 
+        if (_isTransitioning)
+        {
+            return;
+        }
+
+        //
         _currState?.Update();
 
         if (_hasPending)
-            ApplyTransition();
+            ApplyTransition().Forget();
     }
     #endregion
 
@@ -105,6 +115,14 @@ public class StateMachine
     /// </summary>
     public void Request<T, TPayload>(TPayload payload) where T : IState where TPayload : IStatePayload
     {
+        // 전이 중 요청은 무시 or 경고
+        if (_isTransitioning)
+        {
+            Debug.LogWarning($"[StateMachine] Transition in progress. Request<{typeof(T).Name}> ignored.");
+            return;
+        }
+
+        //
         _pendingType    = typeof(T);
         _pendingPayload = payload;
         _hasPending     = true;
@@ -114,8 +132,12 @@ public class StateMachine
     /// <summary>
     /// 지정된 순서에 전이 실행
     /// </summary>
-    private void ApplyTransition()
+    async UniTask ApplyTransition()
     {
+        //
+        _isTransitioning = true;
+
+        //
         var type    = _pendingType;
         var payload = _pendingPayload;
 
@@ -126,9 +148,15 @@ public class StateMachine
         //
         if (_states.TryGetValue(type, out var next))
         {
-            _currState?.Exit();
+            //
+            if (_currState != null)
+            {
+                await _currState.Exit(); // 현재 상태 종료 처리
+            }
+
+            //
             _currState = next;
-            _currState.Enter(payload);
+            await _currState.Enter(payload);    // 새로운 상태 진입
         }
         else if (_parent != null)
         {

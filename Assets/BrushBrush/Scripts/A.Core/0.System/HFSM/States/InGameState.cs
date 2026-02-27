@@ -5,7 +5,7 @@ public class InGamePayload : IStatePayload
     
 }
 
-public class InGameState: CompositeState<InGamePayload>
+public class InGameState: BaseGameState<InGamePayload>
 {
     protected override void Enter_Impl()
     {

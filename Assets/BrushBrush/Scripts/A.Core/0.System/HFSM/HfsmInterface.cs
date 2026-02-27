@@ -1,13 +1,14 @@
+using Cysharp.Threading.Tasks;
 
 /// <summary>
 /// 상태머신 인터페이스
 /// </summary>
 public interface IState
 {
-    void SetOuterMachine(StateMachine outer);
-    void Enter(IStatePayload payload);
-    void Exit();
+    UniTask Enter(IStatePayload payload);
+    UniTask Exit();
     void Update();
+    void SetOuterMachine(StateMachine outer);
 }
 
 

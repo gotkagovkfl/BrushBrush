@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class LoadingPayload : IStatePayload
@@ -5,7 +6,7 @@ public class LoadingPayload : IStatePayload
     
 }
 
-public class LoadingState : CompositeState<LoadingPayload>
+public class LoadingState : BaseGameState<LoadingPayload>
 {
     protected override void Enter_Impl()
     {

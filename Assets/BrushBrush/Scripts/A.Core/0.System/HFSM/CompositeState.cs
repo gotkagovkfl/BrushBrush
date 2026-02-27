@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 
 
 //=======================================================================================================================
@@ -34,14 +35,14 @@ public abstract class CompositeState<TPayload> : IState where TPayload : IStateP
     #region [ 실행 ]
     //==============================================================================
 
-    public void Enter(IStatePayload payload)
+    public virtual async UniTask Enter(IStatePayload payload)
     {
         Payload = payload != null ? (TPayload)payload : default;    // 페이로드가 세팅되지 않은 경우, 기본 값으로 설정 (터짐 방지)
         Enter_Impl();
         _inner.Start();
     }
 
-    public void Exit()
+    public virtual async UniTask Exit()
     {
         _inner.Exit();
         Exit_Impl();

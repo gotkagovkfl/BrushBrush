@@ -6,7 +6,7 @@ public class TitlePayload : IStatePayload
 }
 
 
-public class TitleState: CompositeState<TitlePayload>
+public class TitleState: BaseGameState<TitlePayload>
 {
     protected override void Enter_Impl()
     {
