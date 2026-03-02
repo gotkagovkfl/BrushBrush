@@ -56,6 +56,8 @@ public class GameStateManager : MonoSingleton<GameStateManager>
     /// </summary>
     public void SwitchMainStateTo<TState>(IStatePayload<TState> payload) where TState : IState
     {
+        LoadingPayload loadingPayload = LoadingPayload.Create<TState>(payload);
+        Request<LoadingState>(loadingPayload);
     }
 
     /// <summary>
