@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -56,7 +57,8 @@ public class GameStateManager : MonoSingleton<GameStateManager>
     /// </summary>
     public void SwitchMainStateTo<TState>(IStatePayload<TState> payload) where TState : IState
     {
-        LoadingPayload loadingPayload = LoadingPayload.Create<TState>(payload);
+        Type currStateType = _machine.CurrState.GetType();
+        LoadingPayload loadingPayload = LoadingPayload.Create<TState>(currStateType, payload);
         Request<LoadingState>(loadingPayload);
     }
 

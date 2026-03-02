@@ -8,26 +8,24 @@ using UnityEngine;
 /// </summary>
 public readonly struct LoadingPayload : IStatePayload<LoadingState>
 {
+    public readonly Type PrevStateType;
     public readonly Type NextStateType;
-    public readonly Action Invoke;
+    public readonly Action SwitchStateAction;
 
-    LoadingPayload(Type stateType, Action invoke)
+    public LoadingPayload(Type prevStateType, Type nextStateType, Action action)
     {
-        NextStateType = stateType;
-        Invoke = invoke;
+        PrevStateType = prevStateType;
+        NextStateType = nextStateType;
+        SwitchStateAction = action;
     }
-    
+
     /// <summary>
-    /// 외부에서 상태 전환 함수를 직접 인자에 넣는 방식이 마음에 안들어서 이렇게 수정
+    /// 컴파일 단계 타입 검증을 위해 상태 전환 기능을 페이로드에 넣었다.
     /// </summary>
-    public static LoadingPayload Create<TState>(IStatePayload<TState> payload) where TState : IState
+    public static LoadingPayload Create<TNextState>(Type prevStateType, IStatePayload<TNextState> payload) where TNextState : IState
     {
-        return new LoadingPayload(
-            typeof(TState),
-            () => GameStateManager.Instance.Request<TState>(payload)
-        );
+        return new(prevStateType, typeof(TNextState), () => GameStateManager.Instance.Request<TNextState>(payload));
     }
-
 }
 
 /// <summary>
@@ -38,19 +36,39 @@ public class LoadingState : BaseGameState<LoadingPayload>
 {
     protected override void Enter_Impl()
     {
-        
+        SwitchSceneAsnyc().Forget();
     }
 
     protected override void Exit_Impl()
     {
-        
+
     }
 
     protected override void Update_Impl()
     {
-        
+
     }
 
     //=============================================================
+    /// <summary>
+    /// payload 로 받은 상태로 전이한다.
+    /// </summary>
+    async UniTask SwitchSceneAsnyc()
+    {
+        // 로딩 씬 로드해놓기
+        await SceneLoadManager.Instance.LoadScene(typeof(LoadingState));
+
+        // 사용하지 않는 씬 파괴
+        Type prevStateType = Payload.PrevStateType;
+        await SceneLoadManager.Instance.UnloadScene(prevStateType);
+
+        // 새로운 씬 로드
+        Type nextStateType = Payload.NextStateType;
+        await SceneLoadManager.Instance.LoadScene(nextStateType);
+
+        // 다됐으면 상태 전환
+        await UniTask.Yield();  // 씬로드 후 안정적으로 한프레임 대기후에 상태가 전환된다.
+        Payload.SwitchStateAction?.Invoke();
+    }
 
 }
