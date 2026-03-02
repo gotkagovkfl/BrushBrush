@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PreloadPayload : IStatePayload
+public class PreloadPayload : IStatePayload<PreloadState>
 {
     
 }

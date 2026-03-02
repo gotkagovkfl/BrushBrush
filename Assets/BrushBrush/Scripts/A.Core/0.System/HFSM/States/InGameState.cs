@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class InGamePayload : IStatePayload
+public class InGamePayload : IStatePayload<InGameState>
 {
     
 }

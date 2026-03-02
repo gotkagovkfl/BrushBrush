@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class LoadingPayload : IStatePayload
+public readonly struct LoadingPayload : IStatePayload<LoadingState>
 {
     
 }

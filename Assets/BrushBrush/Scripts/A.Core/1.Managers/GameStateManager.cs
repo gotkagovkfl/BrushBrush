@@ -38,7 +38,7 @@ public class GameStateManager : MonoSingleton<GameStateManager>
 
     void Start()
     {
-        _machine.Start();
+        _machine.Start().Forget();
     }
 
     void Update()
@@ -50,15 +50,21 @@ public class GameStateManager : MonoSingleton<GameStateManager>
     // ==========================================================
     #region [ 상태 전이 ]
     // ==========================================================
+    /// <summary>
+    /// 최상단 상태 전이 - 씬 전환에 필요한 정보들을 넘긴다.
+    /// - 여기서 State에 맞는 payload 검증이 되므로, 내부에서 굳이 payload 가 state에 일치하는 지 검사할 필요는 없다.
+    /// </summary>
+    public void SwitchMainStateTo<TState>(IStatePayload<TState> payload) where TState : IState
+    {
+    }
 
     /// <summary>
     /// 전환
     /// </summary>
-    public void Request<T, TPayload>(TPayload payload) where T : IState where TPayload : IStatePayload
-        => _machine.Request<T, TPayload>(payload);
+    public void Request<TState>(IStatePayload<TState> payload) where TState : IState        
+        => _machine.Request<TState, IStatePayload<TState>>(payload);
 
 
     // todo : 현재 상태 디버깅 텍스트 ( 유틸 ) , 전이 관련
-    
     #endregion
 }

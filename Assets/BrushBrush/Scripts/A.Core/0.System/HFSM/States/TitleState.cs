@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TitlePayload : IStatePayload
+public class TitlePayload : IStatePayload<TitleState>
 {
     
 }

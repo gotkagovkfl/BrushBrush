@@ -5,7 +5,7 @@ using Cysharp.Threading.Tasks;
 
 //=======================================================================================================================
 
-public abstract class CompositeState<TPayload> : IState where TPayload : IStatePayload
+public abstract class CompositeState<TPayload> : IState<TPayload> where TPayload : IStatePayload
 {
     private readonly StateMachine _inner = new();   // 현재
     private StateMachine _outer;    // 부모
