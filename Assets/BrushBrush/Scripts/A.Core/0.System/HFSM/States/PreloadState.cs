@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class PreloadPayload : IStatePayload<PreloadState>
@@ -12,7 +13,7 @@ public class PreloadState : BaseGameState<PreloadPayload>
 {
     protected override void Enter_Impl()
     {
-        
+        PreloadGameAsync().Forget();
     }
 
     protected override void Exit_Impl()
@@ -23,6 +24,18 @@ public class PreloadState : BaseGameState<PreloadPayload>
     protected override void Update_Impl()
     {
         
+    }
+
+    //==========================================================
+    /// <summary>
+    /// 게임 진행에 필요한 것들 생성 요청
+    /// </summary>
+    async UniTask PreloadGameAsync()
+    {
+        await UniTask.WaitForSeconds(1f);
+
+        TitlePayload payload = new();
+        GameStateManager.Instance.SwitchMainStateTo<TitleState>(payload);
     }
 }
 
