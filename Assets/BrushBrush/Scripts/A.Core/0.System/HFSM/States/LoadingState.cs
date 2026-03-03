@@ -68,6 +68,7 @@ public class LoadingState : BaseGameState<LoadingPayload>
 
         // 다됐으면 상태 전환
         await UniTask.Yield();  // 씬로드 후 안정적으로 한프레임 대기후에 상태가 전환된다.
+        await SceneLoadManager.Instance.UnloadScene(typeof(LoadingState));
         Payload.SwitchStateAction?.Invoke();
     }
 
