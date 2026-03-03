@@ -31,6 +31,7 @@ public class GameStateManager : MonoSingleton<GameStateManager>
         _machine.Add(new LoadingState());
         _machine.Add(new PreloadState());
         _machine.Add(new TitleState());
+        _machine.Add(new LobbyState());
         _machine.Add(new InGameState());
 
         // 초기 State와 페이로드 지정
