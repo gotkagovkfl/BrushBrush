@@ -12,7 +12,7 @@ public enum UILayer
     LV_1 = 1,
     LV_2 = 2,
     LV_3 = 3,
-    LV_4 = 4,
+    TOP = 4,
 }
 
 /// <summary>
@@ -22,9 +22,9 @@ public class UIManager : MonoSingleton<UIManager>
 {
     // 캔버스
     Dictionary<UILayer, Canvas> _canvasMap = new();
-    
+
     // uiViews
-    const string PATH_BASE = "UI/";
+    const string PATH_BASE = "B.UI/";
     Dictionary<Type, UIView> _uiViews = new();
 
     //================================================================
@@ -76,11 +76,11 @@ public class UIManager : MonoSingleton<UIManager>
     //================================================================
     #region [ Get ]
     //================================================================
-    
+
     /// <summary>
     /// 해당 타입의 UI 반환
     /// </summary>
-    TView GetOrCreate<TView>() where TView: UIView
+    TView GetOrCreate<TView>() where TView : UIView
     {
         var type = typeof(TView);
 
@@ -99,15 +99,15 @@ public class UIManager : MonoSingleton<UIManager>
 
         // 2. 프리팹 로드 - 프리팹 이름을 커스텀 하는 방법을 생각해보자
         var prefab = Resources.Load<TView>($"{PATH_BASE}{type.Name}");
-        
+
         if (prefab == null)
         {
-            Debug.LogError($"{type.Name} 프리팹을 찾을 수 없습니다!");
+            Debug.LogError($"{PATH_BASE}{type.Name} 프리팹을 찾을 수 없습니다!");
             return null;
         }
 
         // 3. 생성 및 캐싱
-        var ret = Instantiate(prefab, GetLayer(prefab.Layer) , false);
+        var ret = Instantiate(prefab, GetLayer(prefab.Layer), false);
         _uiViews[type] = ret;
 
         Canvas.ForceUpdateCanvases(); // 좌표, 해상도 바로 세팅
@@ -139,7 +139,7 @@ public class UIManager : MonoSingleton<UIManager>
         var view = GetOrCreate<TView>();
         view.Init(param);
         view.OnShow();
-        
+
         return view;
     }
 
@@ -174,10 +174,18 @@ public class UIManager : MonoSingleton<UIManager>
 
     #endregion
     //================================================================
-    #region [ Close ]
+    #region [ Hide ]
     //================================================================
 
-    // TODO : Close  
+    // TODO : Hide
+    /// <summary>
+    /// ui를 비활성화한다. (게임오브젝트 숨김)
+    /// </summary>
+    public void Hide(UIView view)
+    {
+        view.OnHide();
+        view.gameObject.SetActive(false);
+    }  
 
     #endregion
 }
