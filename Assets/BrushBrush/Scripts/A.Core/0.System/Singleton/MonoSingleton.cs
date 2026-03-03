@@ -42,15 +42,17 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T
     /// </summary>
     public async static UniTask CreateAndInitializeAsync()
     {
-        if (Instance != null)
+        if (Instance == null)
         {
-            return;
+            var go = new GameObject(typeof(T).Name);
+            instance = go.AddComponent<T>();
         }
-        var go = new GameObject(typeof(T).Name);
-        instance = go.AddComponent<T>();
-
+        
         //
-        await Instance.InitAsync();
+        if (instance.Initialized == false)
+        {
+            await Instance.InitAsync();
+        }
     }
 
 
