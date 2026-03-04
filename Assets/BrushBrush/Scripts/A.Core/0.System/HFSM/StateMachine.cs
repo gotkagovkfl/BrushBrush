@@ -144,6 +144,7 @@ public class StateMachine
         if (_states.TryGetValue(type, out var next))
         {
             //
+            Debug.Log($"[ HfSM ] 상태전환 시작 {_currState.GetType()} => {next.GetType()}");
             if (_currState != null)
             {
                 await _currState.Exit(); // 현재 상태 종료 처리
@@ -153,6 +154,7 @@ public class StateMachine
             _currState = next;
             await _currState.Enter(payload);    // 새로운 상태 진입
             _isTransitioning = false;
+            Debug.Log($"[ HfSM ] 상태전환 완료 {_currState.GetType()}");
         }
         else if (_parent != null)
         {
