@@ -8,6 +8,21 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/BrushBrush/Scenes/LoadingScene.unity
+    guid: ad9c398adaa3cdb48902efe892c6fd4f
+  - enabled: 1
+    path: Assets/BrushBrush/Scenes/PreloadScene.unity
+    guid: 55b8e37526a428741bef53587c7610e9
+  - enabled: 1
+    path: Assets/BrushBrush/Scenes/TitleScene.unity
+    guid: a7ce808c3388f9040aa223fdae8dc0ba
+  - enabled: 1
+    path: Assets/BrushBrush/Scenes/LobbyScene.unity
+    guid: d5f08e5d5cdb5404dbbf86cdb8490af3
+  - enabled: 1
+    path: Assets/BrushBrush/Scenes/InGameScene.unity
+    guid: 8baefae1af2ac7d4e8af07fd1da1052e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
