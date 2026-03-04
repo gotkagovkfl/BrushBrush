@@ -152,6 +152,7 @@ public class StateMachine
             //
             _currState = next;
             await _currState.Enter(payload);    // 새로운 상태 진입
+            _isTransitioning = false;
         }
         else if (_parent != null)
         {
