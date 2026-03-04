@@ -32,12 +32,12 @@ public abstract class BaseGameState<TPayload> : CompositeState<TPayload> where T
 
     async UniTask FadeInAsync()
     {
-        await UIManager.Instance.FadeInAsync();
+        await DirectingManager.Instance.FadeInAsync(3);
     }
 
     async UniTask FadeOutAsync()
     {
-        await UIManager.Instance.FadeOutAsync();
+        await DirectingManager.Instance.FadeOutAsync(3);
     }
 
 
