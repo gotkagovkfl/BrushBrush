@@ -34,14 +34,21 @@ public readonly struct LoadingPayload : IStatePayload<LoadingState>
 /// </summary>
 public class LoadingState : BaseGameState<LoadingPayload>
 {
-    protected override void Enter_Impl()
+    protected override async UniTask Enter_Impl()
+    {
+        // 로딩 씬 로드해놓기
+        await SceneLoadManager.Instance.LoadScene(typeof(LoadingState));
+    }
+
+    protected override void StartState()
     {
         SwitchSceneAsnyc().Forget();
     }
 
-    protected override void Exit_Impl()
-    {
 
+    protected override async UniTask Exit_Impl()
+    {
+        await SceneLoadManager.Instance.UnloadScene(typeof(LoadingState));
     }
 
     protected override void Update_Impl()
@@ -55,9 +62,6 @@ public class LoadingState : BaseGameState<LoadingPayload>
     /// </summary>
     async UniTask SwitchSceneAsnyc()
     {
-        // 로딩 씬 로드해놓기
-        await SceneLoadManager.Instance.LoadScene(typeof(LoadingState));
-
         // 사용하지 않는 씬 파괴
         Type prevStateType = Payload.PrevStateType;
         await SceneLoadManager.Instance.UnloadScene(prevStateType);
@@ -68,8 +72,8 @@ public class LoadingState : BaseGameState<LoadingPayload>
 
         // 다됐으면 상태 전환
         await UniTask.Yield();  // 씬로드 후 안정적으로 한프레임 대기후에 상태가 전환된다.
-        await SceneLoadManager.Instance.UnloadScene(typeof(LoadingState));
-        Payload.SwitchStateAction?.Invoke();
+
+        Payload.SwitchStateAction?.Invoke(); // 다시한번 페이드인/아웃 하면서 상태 전환
     }
 
 }

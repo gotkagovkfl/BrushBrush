@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PreloadPayload : IStatePayload<PreloadState>
 {
-    
+
 }
 
 /// <summary>
@@ -11,19 +11,25 @@ public class PreloadPayload : IStatePayload<PreloadState>
 /// </summary>
 public class PreloadState : BaseGameState<PreloadPayload>
 {
-    protected override void Enter_Impl()
+    protected override async UniTask Enter_Impl()
+    {
+
+    }
+
+    protected override void StartState()
     {
         PreloadGameAsync().Forget();
     }
 
-    protected override void Exit_Impl()
+
+    protected override async UniTask Exit_Impl()
     {
-        
+
     }
 
     protected override void Update_Impl()
     {
-        
+
     }
 
     //==========================================================
@@ -32,7 +38,7 @@ public class PreloadState : BaseGameState<PreloadPayload>
     /// </summary>
     async UniTask PreloadGameAsync()
     {
-        await UniTask.WaitForSeconds(1f);
+        await UniTask.WaitForSeconds(1f); // 일단 하는거 없으니까 1초 대기
 
         TitlePayload payload = new();
         GameStateManager.Instance.SwitchMainStateTo<TitleState>(payload);

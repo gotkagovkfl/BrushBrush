@@ -12,7 +12,8 @@ public abstract class BaseGameState<TPayload> : CompositeState<TPayload> where T
         await base.Enter(payload);
 
         // ui 생성 후에 화면 보이게 하기 (페이드 아웃)
-        await FadeOutAsync();
+        await FadeOutAsync();   // 이거 때문에 enter에서 씬전환하면 페이드가 겹쳐서 이상해진다. 
+        StartState();  // 페이드아웃 끝나고 시작할 로직
     }
 
     public override async UniTask Exit()
@@ -24,6 +25,10 @@ public abstract class BaseGameState<TPayload> : CompositeState<TPayload> where T
         await base.Exit();
     }
 
+    /// <summary>
+    /// 연출끝난 후 본격적으로 상태시작 로직
+    /// </summary>
+    protected abstract void StartState();
 
     async UniTask FadeInAsync()
     {

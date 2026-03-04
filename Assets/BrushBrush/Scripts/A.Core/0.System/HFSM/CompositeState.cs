@@ -40,14 +40,14 @@ public abstract class CompositeState<TPayload> : IState<TPayload> where TPayload
     public virtual async UniTask Enter(IStatePayload payload)
     {
         Payload = payload != null ? (TPayload)payload : default;    // 페이로드가 세팅되지 않은 경우, 기본 값으로 설정 (터짐 방지)
-        Enter_Impl();
+        await Enter_Impl();
         if (_hasInnerState) await _inner.Start();
     }
 
     public virtual async UniTask Exit()
     {
         if (_hasInnerState) await _inner.Exit();
-        Exit_Impl();
+        await Exit_Impl();
     }
 
 
@@ -57,8 +57,8 @@ public abstract class CompositeState<TPayload> : IState<TPayload> where TPayload
         if (_hasInnerState) _inner.Update();
     }
 
-    protected abstract void Enter_Impl();
-    protected abstract void Exit_Impl();
+    protected abstract UniTask Enter_Impl();
+    protected abstract UniTask Exit_Impl();
     protected abstract void Update_Impl();
 
     #endregion
