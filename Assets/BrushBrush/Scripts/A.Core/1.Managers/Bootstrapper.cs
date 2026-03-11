@@ -25,6 +25,7 @@ public class Bootstapper : MonoSingleton<Bootstapper>
         await UIManager.CreateAndInitializeAsync();
         await DirectingManager.CreateAndInitializeAsync();
         await SceneLoadManager.CreateAndInitializeAsync();
+        await InputManager.CreateAndInitializeAsync();
 
         // 게임 상태 매니저 초기화
         await GameStateManager.CreateAndInitializeAsync();
