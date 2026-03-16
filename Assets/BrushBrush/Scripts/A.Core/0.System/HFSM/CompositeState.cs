@@ -20,8 +20,11 @@ public abstract class CompositeState<TPayload> : IState<TPayload> where TPayload
     protected void Add<T>(T state) where T : IState
         => _inner.Add(state);
 
-    protected void Initial<T>() where T : IState
-        => _inner.SetInitial<T>();
+    protected void Initial<T>(TPayload payload) where T : IState
+    {
+        Payload = payload;
+        _inner.SetInitial<T>();
+    }
 
     /// <summary>
     /// StateMachine.Add()에서 자동 호출. 직접 호출 불필요
