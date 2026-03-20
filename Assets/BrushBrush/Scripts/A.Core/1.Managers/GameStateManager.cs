@@ -9,6 +9,13 @@ public class GameStateManager : MonoSingleton<GameStateManager>
 {
     readonly StateMachine _machine = new(); // root 머신
 
+    // states
+    LoadingState _loadingState;
+    PreloadState _preloadState;
+    TitleState _titleState;
+    LobbyState _lobbyState;
+    InGameState _inGameState;
+
     //======================================================
     #region [ 초기화 ]
     //======================================================
@@ -18,24 +25,46 @@ public class GameStateManager : MonoSingleton<GameStateManager>
     protected async override UniTask InitImpl()
     {
         RegisterStates();
+        SubscribeEvents();
+    }
+
+    protected override void FinalizeManager()
+    {
+        UnsubscribeEvents();
     }
 
     #endregion
     //======================================================
     #region [ 기능 ]
     //======================================================
-    
+
     void RegisterStates()
     {
+        _loadingState = new();
+        _preloadState = new();
+        _titleState = new();
+        _lobbyState = new();
+        _inGameState = new();
+
         // 최상위 State 등록
-        _machine.Add(new LoadingState());
-        _machine.Add(new PreloadState());
-        _machine.Add(new TitleState());
-        _machine.Add(new LobbyState());
-        _machine.Add(new InGameState());
+        _machine.Add(_loadingState);
+        _machine.Add(_preloadState);
+        _machine.Add(_titleState);
+        _machine.Add(_lobbyState);
+        _machine.Add(_inGameState);
 
         // 초기 State와 페이로드 지정
         _machine.SetInitial<PreloadState, PreloadPayload>(default);
+    }
+
+    void SubscribeEvents()
+    {
+        _inGameState.OnRequestReturnLobby += TransitionToLobby;
+    }
+    
+    void UnsubscribeEvents()
+    {
+        _inGameState.OnRequestReturnLobby -= TransitionToLobby;
     }
 
     void Start()
@@ -66,9 +95,15 @@ public class GameStateManager : MonoSingleton<GameStateManager>
     /// <summary>
     /// 전환
     /// </summary>
-    public void Request<TState>(IStatePayload<TState> payload) where TState : IState        
+    public void Request<TState>(IStatePayload<TState> payload) where TState : IState
         => _machine.Request<TState, IStatePayload<TState>>(payload);
 
+    //==============================================================
+    void TransitionToLobby()
+    {
+        LobbyPayload payload = new();
+        SwitchMainStateTo<LobbyState>(payload);
+    }
 
     // todo : 현재 상태 디버깅 텍스트 ( 유틸 ) , 전이 관련
     #endregion

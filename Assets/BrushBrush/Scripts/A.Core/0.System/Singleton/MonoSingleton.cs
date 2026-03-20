@@ -71,5 +71,18 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T
     protected abstract UniTask InitImpl();
 
 
+    //================================================
+    void OnDestroy()
+    {
+        FinalizeManager();
+    }
+
+    /// <summary>
+    /// 매니저가 혹시나 파괴될 때 처리 - 기본값 : 아무것도 안함
+    /// </summary>
+    protected virtual void FinalizeManager()
+    {
+        
+    }
 
 }

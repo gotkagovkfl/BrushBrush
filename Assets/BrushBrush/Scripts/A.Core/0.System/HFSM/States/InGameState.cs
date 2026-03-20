@@ -1,5 +1,6 @@
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using System;
 
 public class InGamePayload : IStatePayload<InGameState>
 {
@@ -15,6 +16,11 @@ public class InGameState : BaseGameState<InGamePayload>
     IntroState _introState; // 게임 준비
     GamePlayState _gamePlayState;   // 게임 진행
     OutroState _outroState; // 게임 종료 후 
+
+    // events
+    public event Action OnRequestReturnLobby;   // 로비로 돌아가기 요청
+    public event Action OnRequestReplay;        // 다시하기 요청
+
 
     //=============================================================
     protected override async UniTask Enter_Impl()
@@ -76,7 +82,6 @@ public class InGameState : BaseGameState<InGamePayload>
     /// </summary>
     void ReturnToLobby()
     {
-        LobbyPayload payload = new();
-        GameStateManager.Instance.SwitchMainStateTo<LobbyState>(payload);
+        OnRequestReturnLobby?.Invoke();
     }
 }
