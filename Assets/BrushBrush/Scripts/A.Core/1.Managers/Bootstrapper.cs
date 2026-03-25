@@ -21,7 +21,11 @@ public class Bootstapper : MonoSingleton<Bootstapper>
     /// 게임 초기화 및 시작
     /// </summary>
     protected async override UniTask InitImpl()
-    {
+    {   
+        //
+        await BBData.InitPreloadData();
+
+        //
         await UIManager.CreateAndInitializeAsync();
         await DirectingManager.CreateAndInitializeAsync();
         await SceneLoadManager.CreateAndInitializeAsync();
