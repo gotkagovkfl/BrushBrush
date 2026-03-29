@@ -1,14 +1,10 @@
 #if UNITY_EDITOR
-using System.ComponentModel;
 using UnityEditor;
 #endif
 
 using UnityEngine;
 
 
-[CreateAssetMenu(fileName = "StageData", 
-                 menuName = "BrushBrush/CreateData/", 
-                 order = 4)]
 public class StageDataSource : ScriptableObject, IDataSource
 {
 
@@ -30,9 +26,11 @@ public class StageDataSource : ScriptableObject, IDataSource
         if (prefabRef != null)
         {
             string fullPath = AssetDatabase.GetAssetPath(prefabRef);
-            if (fullPath.StartsWith("Assets/Resources/"))
+            const string marker = "Resources/";
+            int index = fullPath.IndexOf(marker);
+            if (index >= 0)
             {
-                PrefabPath = fullPath.Replace("Assets/Resources/", "").Replace(".prefab", "");
+                PrefabPath = fullPath.Substring(index + marker.Length).Replace(".prefab", "");
             }
             else
             {
