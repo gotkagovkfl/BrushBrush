@@ -2,9 +2,13 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System;
 
-public class InGamePayload : IStatePayload<InGameState>
+/// <summary>
+/// 게임에 사용되는 정보 : 유저 정보, 캐릭터 정보, 스테이지 정보, 난이도 등
+/// </summary>
+public struct InGamePayload : IStatePayload<InGameState>
 {
-
+    public string CharacterId;  // 플레이어 캐릭터
+    public string StageId;  // 스테이지
 }
 
 /// <summary>
@@ -21,10 +25,17 @@ public class InGameState : BaseGameState<InGamePayload>
     public event Action OnRequestReturnLobby;   // 로비로 돌아가기 요청
     public event Action OnRequestReplay;        // 다시하기 요청
 
+    //
+    StageManager _stageManager;
+
 
     //=============================================================
     protected override async UniTask Enter_Impl()
     {
+        //
+        await InitStageAsync();
+        await InitPlayerAsync();
+
         //
         _introState = new();
         _gamePlayState = new();
@@ -42,7 +53,7 @@ public class InGameState : BaseGameState<InGamePayload>
         Initial<IntroState>(default);
     }
 
-    protected override void StartState()
+    protected override void StartState_Impl()
     {
 
     }
@@ -83,5 +94,29 @@ public class InGameState : BaseGameState<InGamePayload>
     void ReturnToLobby()
     {
         OnRequestReturnLobby?.Invoke();
+    }
+
+    //=======================================================================
+    /// <summary>
+    ///  스테이지를 생성 및 초기화한다.
+    /// </summary>
+    async UniTask InitStageAsync()
+    {
+        // 스테이지 매니저 초기화
+        string stageId = Payload.StageId;
+        StageData stageData = BBData.Get<StageData>(stageId);
+        _stageManager = new(stageData);
+
+        //
+        await _stageManager.GenerateStageAsync();
+    }
+
+    /// <summary>
+    /// 플레이어 캐릭터를 생성 및 초기화한다.
+    /// </summary>
+    async UniTask InitPlayerAsync()
+    {
+        // 스테이지 매니저 초기화
+        string charId = Payload.CharacterId;
     }
 }
