@@ -40,7 +40,7 @@ public class LoadingState : BaseGameState<LoadingPayload>
         await SceneLoadManager.Instance.LoadScene(typeof(LoadingState));
     }
 
-    protected override void StartState()
+    protected override void StartState_Impl()
     {
         SwitchSceneAsnyc().Forget();
     }

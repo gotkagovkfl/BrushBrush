@@ -15,6 +15,7 @@ public interface IState<TPayload>  : IState where TPayload : IStatePayload
 public interface IState
 {
     UniTask Enter(IStatePayload payload);
+    void StartState();
     UniTask Exit();
     void Update();
     void SetOuterMachine(StateMachine outer);

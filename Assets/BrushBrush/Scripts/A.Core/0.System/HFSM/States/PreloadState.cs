@@ -16,7 +16,7 @@ public class PreloadState : BaseGameState<PreloadPayload>
 
     }
 
-    protected override void StartState()
+    protected override void StartState_Impl()
     {
         PreloadGameAsync().Forget();
     }

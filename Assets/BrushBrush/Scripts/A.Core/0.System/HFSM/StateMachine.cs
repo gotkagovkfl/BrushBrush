@@ -17,7 +17,7 @@ public class StateMachine
 
     Type _pendingType;   // 전이할 상태 타입
     IStatePayload _pendingPayload;
-    bool _hasPending;  
+    bool _hasPending;
     bool _isTransitioning;  // 상태 전환 중일때 (update에서 로직 실행 방지)
 
     StateMachine _parent; // 부모 머신
@@ -63,10 +63,11 @@ public class StateMachine
     // =============================================================================
     #region [ 실행 ]    //==============================================================================
 
+
     /// <summary>
-    /// 상태 머신 시작
+    /// 상태 머신 진입(초기화) 
     /// </summary>
-    public async UniTask Start()
+    public async UniTask Enter()
     {
         // 머신의 시작 상태가 반드시 존재해야한다.
         if (_currState == null)
@@ -76,6 +77,16 @@ public class StateMachine
         await _currState.Enter(_pendingPayload);
         _pendingPayload = null;
     }
+
+    /// <summary>
+    /// 상태 머신 시작 - 진입 이후에 호출되어야함
+    /// </summary>
+    public void Start()
+    {
+        if (_currState != null)
+            _currState.StartState();
+    }
+
     public async UniTask Exit()
     {
         if (_currState != null)
@@ -119,9 +130,9 @@ public class StateMachine
         }
 
         //
-        _pendingType    = typeof(T);
+        _pendingType = typeof(T);
         _pendingPayload = payload;
-        _hasPending     = true;
+        _hasPending = true;
     }
 
 
@@ -134,12 +145,12 @@ public class StateMachine
         _isTransitioning = true;
 
         //
-        var type    = _pendingType;
+        var type = _pendingType;
         var payload = _pendingPayload;
 
-        _pendingType    = null;
+        _pendingType = null;
         _pendingPayload = null;
-        _hasPending     = false;
+        _hasPending = false;
 
         //
         if (_states.TryGetValue(type, out var next))
@@ -155,7 +166,9 @@ public class StateMachine
             _currState = next;
             await _currState.Enter(payload);    // 새로운 상태 진입
             _isTransitioning = false;
-            Debug.Log($"[ HfSM ] 상태전환 완료 {_currState.GetType()}");
+            Debug.Log($"[ HfSM ] 상태전환 완료. 상태 시작 {_currState.GetType()}");
+            _currState.StartState();    // 전환 완료 처리 이후 상태 시작.
+
         }
         else if (_parent != null)
         {
@@ -173,9 +186,9 @@ public class StateMachine
     /// </summary>
     internal void BubbleUp(Type type, IStatePayload payload)
     {
-        _pendingType    = type;
+        _pendingType = type;
         _pendingPayload = payload;
-        _hasPending     = true;
+        _hasPending = true;
     }
     #endregion
 }

@@ -44,7 +44,16 @@ public abstract class CompositeState<TPayload> : IState<TPayload> where TPayload
     {
         Payload = payload != null ? (TPayload)payload : default;    // 페이로드가 세팅되지 않은 경우, 기본 값으로 설정 (터짐 방지)
         await Enter_Impl();
-        if (_hasInnerState) await _inner.Start();
+        if (_hasInnerState) await _inner.Enter();
+    }
+
+    /// <summary>
+    /// Enter(초기화) 이후 로직 시작
+    /// </summary>
+    public virtual void StartState()
+    {
+        StartState_Impl();
+        if (_hasInnerState) _inner.Start();
     }
 
     public virtual async UniTask Exit()
@@ -61,6 +70,7 @@ public abstract class CompositeState<TPayload> : IState<TPayload> where TPayload
     }
 
     protected abstract UniTask Enter_Impl();
+    protected virtual void StartState_Impl() { }
     protected abstract UniTask Exit_Impl();
     protected abstract void Update_Impl();
 
@@ -68,13 +78,13 @@ public abstract class CompositeState<TPayload> : IState<TPayload> where TPayload
     //=================================================================================
     #region [ 상태 전이 ]
     //=================================================================================
- 
+
     protected void Request<T, TNextPayload>(TNextPayload payload) where T : IState where TNextPayload : IStatePayload
         => _inner.Request<T, TNextPayload>(payload);
 
     protected void RequestToOuter<T, TNextPayload>(TNextPayload payload) where T : IState where TNextPayload : IStatePayload
         => _outer?.Request<T, TNextPayload>(payload);
 
-        
+
     #endregion
 }
