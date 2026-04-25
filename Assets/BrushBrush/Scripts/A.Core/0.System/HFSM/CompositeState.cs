@@ -11,7 +11,7 @@ public abstract class CompositeState<TPayload> : IState<TPayload> where TPayload
     private StateMachine _outer;    // 부모
     protected TPayload Payload { get; private set; }
 
-    bool _hasInnerState;    // 자식 상태가 있는지,
+    bool _hasInnerState => _inner != null && _inner.HasStates;    // 자식 상태가 있는지,
 
     // ==========================================================
     #region [ 초기화 ]

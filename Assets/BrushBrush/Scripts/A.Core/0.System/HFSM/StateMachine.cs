@@ -8,8 +8,9 @@ using UnityEngine;
 /// 자식을 등록하면 서브 루프, 등록하지 않으면 리프처럼 동작.
 /// </summary>
 public class StateMachine
-{   
+{
     Dictionary<Type, IState> _states = new();
+    public bool HasStates => _states != null && _states.Count > 0;
 
     IState _currState; // 현재 상태
     public IState CurrState => _currState;
