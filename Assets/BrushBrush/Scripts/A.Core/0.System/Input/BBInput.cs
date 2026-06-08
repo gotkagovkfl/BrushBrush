@@ -31,20 +31,15 @@ public class BBInput
 
     IInputBinding _binding;
 
-    public event Action OnKeyDown;
-    public event Action OnKey;
-    public event Action OnKeyUp;
+    public bool OnKeyDown;
+    public bool OnKey;
+    public bool OnKeyUp;
 
     public void Evaluate()
     {
-        if (_binding.GetKeyDown())
-            OnKeyDown?.Invoke();
-
-        if (_binding.GetKey())
-            OnKey?.Invoke();
-
-        if (_binding.GetKeyUp())
-            OnKeyUp?.Invoke();
+        OnKeyDown = _binding.GetKeyDown();
+        OnKey = _binding.GetKey();
+        OnKeyUp  = _binding.GetKeyUp();
     }
 
     public BBInput(InputType type, IInputBinding binding)
