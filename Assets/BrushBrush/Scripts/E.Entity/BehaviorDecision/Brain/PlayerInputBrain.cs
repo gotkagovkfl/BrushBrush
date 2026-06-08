@@ -21,7 +21,20 @@ public class PlayerInputBrain : EntityBrain
 
     public override void Tick(float dt)
     {
+        PushMoveIntent();   // 움직임 intent 생성
     }
 
+    //=============================================================================
 
+    /// <summary>
+    /// 움직임 입력으로 생성
+    /// </summary>
+    void PushMoveIntent()
+    {
+        Vector2 moveInput = InputManager.Instance.LastMoveInputVector;
+        Vector3 moveDir = new Vector3(moveInput.x, 0, moveInput.y).normalized;
+
+        EntityMoveIntent moveIntent = new(moveDir);
+        _actionSys.EnqueueIntent(moveIntent);
+    }
 }
