@@ -13,6 +13,9 @@ public class InputManager : MonoSingleton<InputManager>
     Dictionary<InputType, BBInput> _inputDic;
     List<BBInput> _inputList;   // eval 하기 위해 캐싱한 리스트
 
+    // 이동 관련
+    public Vector2 LastMoveInputVector { get; private set; } // 움직임 벡터 
+
     //================================================================
     #region [ 초기화 ]
     //==================================================================
@@ -53,18 +56,13 @@ public class InputManager : MonoSingleton<InputManager>
     void Update()
     {
         //
-        if (InputDisabled)
-        {
-            return;
-        }
-
-        //
         foreach (var input in _inputList)
         {
             input.Evaluate();
         }
 
-        // todo : 호출 순서에 따라 씹힐 수도 있는 문제 해결해야함
+        //
+        MakeMoveInputVector(); // 움직임 벡터 생성
     }
 
 
@@ -75,6 +73,28 @@ public class InputManager : MonoSingleton<InputManager>
     {
         return _inputDic[type];
     }
+
+    //================================================================
+    /// <summary>
+    /// 이동 관련 인풋 감지 (캐릭터 이동, ui 네비게이션 등)
+    /// </summary>
+    void MakeMoveInputVector()
+    {
+        // 값 초기화 - 입력이 없다면 (0,0)
+        int hAxis = 0;  // 좌우
+        int vAxis = 0;  // 상하
+
+        // 인풋 감지하여 값 생성
+        if (GetInput(InputType.MOVE_L).OnKey) hAxis -= 1;
+        if (GetInput(InputType.MOVE_R).OnKey) hAxis += 1;
+
+        if (GetInput(InputType.MOVE_U).OnKey) vAxis += 1;
+        if (GetInput(InputType.MOVE_D).OnKey) vAxis -= 1;
+
+        // 벡터 갱신
+        LastMoveInputVector = new Vector2(hAxis, vAxis);
+    }
+
 
     #endregion
 }
