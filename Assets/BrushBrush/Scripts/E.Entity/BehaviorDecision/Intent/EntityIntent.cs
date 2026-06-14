@@ -3,5 +3,5 @@ using UnityEngine;
 
 public interface IEntityIntent
 {
-    public void Process();  // intent 실행
+    public void Proceed(Entity entity);  // intent 실행
 }

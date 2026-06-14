@@ -1,9 +1,14 @@
 using UnityEngine;
 
-public class EntityStatusEffectSystem : IEntitySystem
+public class EntityStatusEffectSystem : EntitySystem
 {
-    public void Tick(float dt)
+    public EntityStatusEffectSystem(Entity entity) : base(entity)
     {
-        
+
+    }
+
+    public override void Tick(float dt)
+    {
+
     }
 }

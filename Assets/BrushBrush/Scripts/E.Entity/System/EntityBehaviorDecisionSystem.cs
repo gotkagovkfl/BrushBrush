@@ -4,19 +4,19 @@ using UnityEngine;
 /// <summary>
 /// 엔티티의 의사결정 시스템 (플레이어 조종 및 몬스터 ai)
 /// </summary>
-public class EntityBehaviorDecisionSystem : IEntitySystem
+public class EntityBehaviorDecisionSystem : EntitySystem
 {
     EntityBrain _brain;
     Queue<IEntityIntent> _currFrameIntents;
 
-    public EntityBehaviorDecisionSystem(EntityBrain brain)
+    public EntityBehaviorDecisionSystem(Entity entity, EntityBrain brain) : base(entity)
     {
         _brain = brain;
         _currFrameIntents = new();
     }
 
 
-    public void Tick(float dt)
+    public override void Tick(float dt)
     {
         _brain.Tick(dt);    // 1. 이번 프레임 intent 수집
         ProcessIntents();   // 2. 수집한 intent 실행
@@ -31,14 +31,14 @@ public class EntityBehaviorDecisionSystem : IEntitySystem
     }
     
     /// <summary>
-    /// 수집한 intent들을 전부 실행한다.
+    /// 수집한 intent들을 전부 실행하여 지정된 시스템에 전달한다.
     /// </summary>
     void ProcessIntents()
     {
         while (_currFrameIntents.Count > 0)
         {
             IEntityIntent intent = _currFrameIntents.Dequeue();
-            intent.Process();
+            intent.Proceed(_entity);
         }
     }
 }

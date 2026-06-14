@@ -1,9 +1,14 @@
 using UnityEngine;
 
-public class EntityAbilitySystem : IEntitySystem
+public class EntityAbilitySystem : EntitySystem
 {
-    public void Tick(float dt)
+    public EntityAbilitySystem(Entity entity) : base(entity)
     {
-        
+
+    }
+
+    public override void Tick(float dt)
+    {
+
     }
 }

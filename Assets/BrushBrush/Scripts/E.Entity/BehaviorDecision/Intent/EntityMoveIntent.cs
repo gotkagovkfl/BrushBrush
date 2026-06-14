@@ -11,6 +11,7 @@ public struct EntityMoveIntent : IEntityIntent
 
 
     public void Process()
+    public void Proceed(Entity entity)
     {
         
     }
