@@ -5,5 +5,5 @@ using UnityEngine;
 /// </summary>
 public class EntityState
 {
-
+    public bool CanControlMovement { get; private set; } = true;    // 스스로 움직임 제어가 가능한지
 }
